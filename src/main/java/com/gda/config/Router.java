@@ -1,4 +1,4 @@
-package com.gda.router;
+package com.gda.config;
 
 import com.gda.controllers.CarController;
 import spark.Spark;
@@ -10,10 +10,8 @@ public class Router implements SparkApplication {
     @Override
     public void init() {
 
-        get("/cars/:car_id", CarController::getCarById);
-        delete("/cars/:car_id", CarController::deleteCarById);
-        put("/cars/:car_id", CarController::updateCar);
-        post("/cars", CarController::createCar);
+        delete("/car/delete", CarController::deleteCarById);
+
 
         Spark.notFound((req, res) -> {res.type("application/json");
             return "{\"message\":\"Invalid URL.\"}";});

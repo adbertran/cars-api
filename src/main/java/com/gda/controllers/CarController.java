@@ -1,7 +1,12 @@
 package com.gda.controllers;
 
+import com.gda.dtos.CarJson;
+import com.gda.persistence.DaoService;
+import com.gda.utils.JsonFormatter;
 import spark.Request;
 import spark.Response;
+
+import javax.servlet.http.HttpServletResponse;
 
 public class CarController {
     public static Object getCarById(Request req, Response res) {
@@ -10,8 +15,21 @@ public class CarController {
     }
 
     public static Object deleteCarById(Request req, Response res) {
-        //Todo: borrar un auto según id y devolver success o fail.
-        return "delete";
+        //borrar un auto según id y devolver success o fail.
+
+        try {
+            CarJson carjson = JsonFormatter.parse(req.body(), CarJson.class);
+
+            DaoService.INSTANCE.deleteCar(carjson.getCarId());
+
+            res.header("Content-Type", "application/json");
+            res.status(HttpServletResponse.SC_OK);
+            return JsonFormatter.format(carjson);
+
+        } catch (Exception e) {
+            res.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+            return "Se rompio json: " + e.getMessage();
+        }
     }
 
     public static Object createCar(Request req, Response res) {
