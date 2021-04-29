@@ -1,5 +1,7 @@
 package com.gda.domain;
 
+import com.gda.dtos.Car;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -13,7 +15,7 @@ public class Cars {
     private String brand;
     private String colour;
     private BigDecimal value;
-    private String licencePlate;
+    private String licensePlate;
     private transient Timestamp dateCreated;
     private transient Timestamp lastUpdated;
 
@@ -59,12 +61,12 @@ public class Cars {
 
     @Basic
     @Column(name = "licencePlate", nullable = false, length = 50)
-    public String getLicencePlate() {
-        return licencePlate;
+    public String getLicensePlate() {
+        return licensePlate;
     }
 
-    public void setLicencePlate(String licencePlate) {
-        this.licencePlate = licencePlate;
+    public void setLicensePlate(String licencePlate) {
+        this.licensePlate = licencePlate;
     }
 
     @Basic
@@ -103,11 +105,22 @@ public class Cars {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Cars cars = (Cars) o;
-        return carId.equals(cars.carId) && brand.equals(cars.brand) && colour.equals(cars.colour) && value.equals(cars.value) && licencePlate.equals(cars.licencePlate);
+        return carId.equals(cars.carId) && brand.equals(cars.brand) && colour.equals(cars.colour) && value.equals(cars.value) && licensePlate.equals(cars.licensePlate);
     }
 
     @Override
     public int hashCode() {
         return Objects.hash(carId);
+    }
+
+    public static Cars createFrom(Car car){
+        Cars carDb = new Cars();
+        carDb.carId = car.getCarId();
+        carDb.brand = car.getBrand();
+        carDb.colour = car.getColour();
+        carDb.value = car.getValue();
+        carDb.licensePlate = car.getLicensePlate();
+
+        return carDb;
     }
 }
