@@ -13,7 +13,7 @@ public class Cars {
     private String brand;
     private String colour;
     private BigDecimal value;
-    private String licencePlate;
+    private String licensePlate;
     private transient Timestamp dateCreated;
     private transient Timestamp lastUpdated;
 
@@ -38,7 +38,7 @@ public class Cars {
     }
 
     @Basic
-    @Column(name = "colour", nullable = false, length = 50)
+    @Column(name = "colour", nullable = false, length = 20)
     public String getColour() {
         return colour;
     }
@@ -58,13 +58,13 @@ public class Cars {
     }
 
     @Basic
-    @Column(name = "licencePlate", nullable = false, length = 50)
-    public String getLicencePlate() {
-        return licencePlate;
+    @Column(name = "licensePlate", nullable = false, length = 7)
+    public String getLicensePlate() {
+        return licensePlate;
     }
 
-    public void setLicencePlate(String licencePlate) {
-        this.licencePlate = licencePlate;
+    public void setLicensePlate(String licensePlate) {
+        this.licensePlate = licensePlate;
     }
 
     @Basic
@@ -103,7 +103,7 @@ public class Cars {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         Cars cars = (Cars) o;
-        return carId.equals(cars.carId) && brand.equals(cars.brand) && colour.equals(cars.colour) && value.equals(cars.value) && licencePlate.equals(cars.licencePlate);
+        return carId.equals(cars.carId) && brand.equals(cars.brand) && colour.equals(cars.colour) && value.equals(cars.value) && licensePlate.equals(cars.licensePlate);
     }
 
     @Override
