@@ -33,7 +33,7 @@ public class DaoService {
     }
 
     //(GET) Select a car by its ID.
-    public Cars getCar(Integer carId) {
+    public Cars getCarById(Integer carId) {
         Cars car;
         Session currentSession = sessionFactory.openSession();
         Transaction transaction = null;
@@ -57,7 +57,7 @@ public class DaoService {
         return car;
     }
 
-    //(POST) Update DB
+    //(POST) Create car in DB
     public void merge (Object object) {
         Session currentSession = sessionFactory.openSession();
         Transaction transaction = null;
@@ -82,7 +82,7 @@ public class DaoService {
     }
 
     //(DELETE) Delete a car by its ID.
-    public void deleteCar(Integer carId) {
+    public void deleteCarById(Integer carId) {
         Cars car;
         Session currentSession = sessionFactory.openSession();
         Transaction transaction = null;
@@ -92,7 +92,7 @@ public class DaoService {
             car = currentSession.get(Cars.class, carId);
 
             //If car exists, delete it.
-            if (car !=null) {
+            if (car != null) {
                 currentSession.delete(car);
                 currentSession.flush();
                 transaction.commit();
@@ -109,9 +109,29 @@ public class DaoService {
             currentSession.close();
         }
     }
+
+    //(PUT) Update car in DB
+    public void update (Object object) {
+        Session currentSession = sessionFactory.openSession();
+        Transaction transaction = null;
+
+        try {
+            transaction = currentSession.beginTransaction();
+            currentSession.update(object);
+            currentSession.flush();
+            transaction.commit();
+
+        } catch (Exception e) {
+            if(transaction != null)
+                transaction.rollback();
+
+            e.printStackTrace();
+            throw e;
+        }
+
+        finally {
+            currentSession.close();
+        }
+    }
     //End Public class methods ---------------------------------------
-
-
-    //   DaoService() {
-    //       this.sessionFactory=HibernateSessionFactory.INSTANCE.buildSessionFactory();
 }

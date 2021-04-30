@@ -1,8 +1,11 @@
 package com.gda.domain;
 
+import com.gda.dtos.CarJson;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Objects;
 
@@ -110,4 +113,19 @@ public class Cars {
     public int hashCode() {
         return Objects.hash(carId);
     }
+
+    //Map Car Json to the DB object.
+    public static Cars createForm(CarJson carJson) {
+        Cars car = new Cars();
+        car.carId = carJson.getCarId();
+        car.brand = carJson.getBrand();
+        car.colour = carJson.getColour();
+        car.licensePlate = carJson.getLicensePlate();
+        car.value = carJson.getValue();
+        //car.dateCreated = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(carJson.getDateCreated());
+        //car.lastUpdated = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(carJson.getLastUpdated());
+
+        return car;
+    }
+    //-------------------------------------------------
 }
