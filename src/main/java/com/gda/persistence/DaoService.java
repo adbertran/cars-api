@@ -58,7 +58,7 @@ public class DaoService {
     }
 
     //(POST) Create car in DB
-    public void merge (Object object) {
+    public Boolean merge (Object object) {
         Session currentSession = sessionFactory.openSession();
         Transaction transaction = null;
 
@@ -68,12 +68,14 @@ public class DaoService {
             currentSession.flush();
             transaction.commit();
 
+            return true;
+
         } catch (Exception e) {
             if(transaction != null)
                 transaction.rollback();
 
             e.printStackTrace();
-            throw e;
+            return false;
         }
 
         finally {
@@ -82,7 +84,7 @@ public class DaoService {
     }
 
     //(DELETE) Delete a car by its ID.
-    public void deleteCarById(Integer carId) {
+    public Boolean deleteCarById(Integer carId) {
         Cars car;
         Session currentSession = sessionFactory.openSession();
         Transaction transaction = null;
@@ -96,14 +98,18 @@ public class DaoService {
                 currentSession.delete(car);
                 currentSession.flush();
                 transaction.commit();
-            }
+
+                return true;
+
+            } else
+                return false;
 
         } catch (Exception e) {
             if(transaction !=null)
                 transaction.rollback();
 
             e.printStackTrace();
-            throw e;
+            return false;
 
         } finally {
             currentSession.close();
@@ -111,7 +117,7 @@ public class DaoService {
     }
 
     //(PUT) Update car in DB
-    public void update (Object object) {
+    public Boolean update (Object object) {
         Session currentSession = sessionFactory.openSession();
         Transaction transaction = null;
 
@@ -121,12 +127,14 @@ public class DaoService {
             currentSession.flush();
             transaction.commit();
 
+            return true;
+
         } catch (Exception e) {
             if(transaction != null)
                 transaction.rollback();
 
             e.printStackTrace();
-            throw e;
+            return false;
         }
 
         finally {

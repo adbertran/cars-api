@@ -4,134 +4,94 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gda.domain.Cars;
 import com.gda.dtos.CarJson;
 import com.gda.persistence.DaoService;
+import com.gda.services.CarService;
 import com.gda.utils.JsonFormatter;
 import spark.Request;
 import spark.Response;
-
 import javax.servlet.http.HttpServletResponse;
 
 public class CarController {
     //Get car by its ID.
     public static Object getCarById(Request req, Response res) {
-        //Todo: Agregar manejo de errores.
         String carId =  req.params(":car_id");
 
-        try {
-            Cars car = DaoService.getDaoService().getCarById(Integer.valueOf(carId));
+        //Get the car by Id
+        Object object = CarService.getCarService().getCarById(Integer.valueOf(carId));
+        res.header("Content-Type", "application/json");
 
-            res.header("Content-Type", "application/json");
+        //If we get a CarJson, car was found. All good.
+        if (object instanceof CarJson) {
             res.status(HttpServletResponse.SC_OK);
-
-            //Verify if car exists.
-            if (car != null)
-                return JsonFormatter.format(CarJson.createForm(car));
-            else
-                return "Car " + carId + " not found.";
-
-       } catch (NumberFormatException e) {
+        } else
             res.status(HttpServletResponse.SC_BAD_REQUEST);
-            e.printStackTrace();
-            return "Invalid Car ID (" + carId + "). Car not found.";
 
-        } catch (JsonProcessingException e) {
-            res.status(HttpServletResponse.SC_BAD_REQUEST);
-            e.printStackTrace();
-            return "Invalid request. Car not found.";
-        }
-
+        return object;
     }
 
     //Delete car by its ID.
     public static String deleteCarById(Request req, Response res) {
-        //Todo: Agregar manejo de errores.
         String carId =  req.params(":car_id");
+        String returnMsg = "";
 
-        try {
-            //Get the car to validate if exists.
-            Cars car = DaoService.getDaoService().getCarById(Integer.valueOf(carId));
+        //Verify if delete was successfull or failed.
+        if (CarService.getCarService().deleteCarById(Integer.valueOf(carId))) {
+            res.status(HttpServletResponse.SC_OK);
+            returnMsg = String.format("Car %s successfully deleted.", carId);
 
-            if (car != null) {
-                DaoService.getDaoService().deleteCarById(Integer.valueOf(carId));
-
-                res.header("Content-Type", "application/json");
-                res.status(HttpServletResponse.SC_OK);
-
-                return "Car (" + carId + ") " + car.getLicensePlate() + " successfully deleted.";
-
-            } else
-                return "Car " + carId + " could not be deleted. Car not found.";
-
-        } catch (Exception e) {
+        } else {
             res.status(HttpServletResponse.SC_BAD_REQUEST);
-            e.printStackTrace();
-
-            return "Car " + carId + " could not be deleted. Car not found.";
+            returnMsg = String.format("Car %s not found. The car was not deleted.", carId);
         }
+
+        return returnMsg;
     }
 
     //Update an existing car.
-    public static Object updateCarById(Request req, Response res) {
+    public static String updateCarById(Request req, Response res) {
         try {
             //Get request body and transform it into a CarJson object.
             CarJson carJson = JsonFormatter.parse(req.body(), CarJson.class);
 
-            //Validate if car to be updated exists.
-            Cars carToBeUpdated = DaoService.getDaoService().getCarById(Integer.valueOf(carJson.getCarId()));
-
-            //Map the Json into the Car DB object.
-            Cars car = Cars.createForm(carJson);
-
-            System.out.println("DEBUG: ID to update: " + carJson.getCarId());
-
-            if (carToBeUpdated != null) {
-                DaoService.getDaoService().update(car);
-                res.header("Content-Type", "application/json");
+            res.header("Content-Type", "application/json");
+            if (CarService.getCarService().updateCarById(carJson)) {
                 res.status(HttpServletResponse.SC_OK);
 
-                return JsonFormatter.format(carJson);
+                return String.format("Car (%d) %s updated successfully.", carJson.getCarId(), carJson.getLicensePlate());
 
-            } else
+            } else {
+                res.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
+
                 return String.format("Car (%d) %s does not exists.%nCar could not be updated.", carJson.getCarId(), carJson.getLicensePlate());
+            }
 
         } catch (JsonProcessingException e) {
-            res.header("Content-Type", "application/json");
-            res.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             e.printStackTrace();
-
             return String.format("Error %s: Car could not be updated.", HttpServletResponse.SC_INTERNAL_SERVER_ERROR, e);
         }
     }
 
     //Create a new car.
     public static Object postCreateCar(Request req, Response res) {
-        //Todo: crear un nuevo auto con los datos que vienen en el body del json y devolver success o fail.
         try {
             //Get request body and transform it into a CarJson object.
             CarJson carJson = JsonFormatter.parse(req.body(),CarJson.class);
 
-            //Map the Json into the Car DB object.
-            Cars car = Cars.createForm(carJson);
-
-            //Verify that the car Id does not exists.
-            Cars carExists = DaoService.getDaoService().getCarById(car.getCarId());
-
-            if (carExists == null) {
+            res.header("Content-Type", "application/json");
+            if (CarService.getCarService().createCar(carJson)) {
                 //Create car.
-                DaoService.getDaoService().merge(car);
-                res.header("Content-Type", "application/json");
                 res.status(HttpServletResponse.SC_OK);
 
                 return JsonFormatter.format(carJson);
 
             } else
-                return "Car (" + String.valueOf(car.getCarId()) + " ) " + car.getLicensePlate() + " already exists. Car could not be created.";
+                return "Car already exists. Car could not be created.";
 
 
         } catch (JsonProcessingException e) {
             res.status(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
             e.printStackTrace();
 
-            return "Car could not be created.";
+            return String.format("Json Exception: Car could not be created.%n%s", e);
         }
 
     }
