@@ -13,6 +13,7 @@ public class Router implements SparkApplication {
         delete("/cars/:car_id", CarController::deleteCarById);
         put("/cars/:car_id", CarController::updateCar);
         post("/cars", CarController::createCar);
+
         Spark.notFound((req, res) -> {res.type("application/json");
             return "{\"message\":\"Invalid URL.\"}";});
     }

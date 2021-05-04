@@ -16,9 +16,8 @@ public class JsonResponseFactory {
     }
 
     public static String createJsonResponse(Response res, int statusCode, Object o) {
-        res.header("Content-Type", "application/json");
-
         try {
+            res.header("Content-Type", "application/json");
             res.status(statusCode);
             return JsonFormatter.format(o);
         } catch (JsonProcessingException e) {
