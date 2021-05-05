@@ -1,6 +1,6 @@
 package com.gda.domain;
 
-import com.gda.dtos.Car;
+import com.gda.dtos.CarJson;
 
 import javax.persistence.*;
 import java.math.BigDecimal;
@@ -113,13 +113,13 @@ public class Cars {
         return Objects.hash(carId);
     }
 
-    public static Cars createFrom(Car car){
+    public static Cars createFrom(CarJson carJson){
         Cars carDb = new Cars();
-        carDb.carId = car.getCarId();
-        carDb.brand = car.getBrand();
-        carDb.colour = car.getColour();
-        carDb.value = car.getValue();
-        carDb.licensePlate = car.getLicensePlate();
+        carDb.carId = carJson.getCarId();
+        carDb.brand = carJson.getBrand();
+        carDb.colour = carJson.getColour();
+        carDb.value = carJson.getValue();
+        carDb.licensePlate = carJson.getLicensePlate();
 
         return carDb;
     }

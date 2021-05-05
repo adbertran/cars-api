@@ -4,7 +4,7 @@ import com.gda.domain.Cars;
 
 import java.math.BigDecimal;
 
-public class Car {
+public class CarJson extends JsonDto {
     private Integer carId;
     private String brand;
     private String colour;
@@ -51,14 +51,14 @@ public class Car {
         this.licensePlate = licensePlate;
     }
 
-    public static Car createFrom(Cars cars){
-        Car car = new Car();
-        car.carId = cars.getCarId();
-        car.brand = cars.getBrand();
-        car.colour = cars.getColour();
-        car.value = cars.getValue();
-        car.licensePlate = cars.getLicensePlate();
+    public static CarJson createFrom(Cars cars){
+        CarJson carJson = new CarJson();
+        carJson.carId = cars.getCarId();
+        carJson.brand = cars.getBrand();
+        carJson.colour = cars.getColour();
+        carJson.value = cars.getValue();
+        carJson.licensePlate = cars.getLicensePlate();
 
-        return car;
+        return carJson;
     }
 }

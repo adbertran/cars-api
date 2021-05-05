@@ -1,6 +1,7 @@
 package com.gda.persistence;
 
 import com.gda.domain.Cars;
+import com.gda.exceptions.ApiException;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -20,7 +21,7 @@ public enum DaoService {
 
     }
 
-    public void merge(Object object) {
+    public void merge(Object object) throws ApiException {
         Session session = sessionFactory.openSession();
         Transaction tx = null;
 
@@ -36,7 +37,7 @@ public enum DaoService {
             if (tx != null)
                 tx.rollback();
 
-            throw e;
+            throw new ApiException("Error saving object in the database.", e);
 
         } finally {
             session.close();

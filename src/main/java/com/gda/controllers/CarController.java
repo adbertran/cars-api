@@ -2,7 +2,8 @@ package com.gda.controllers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.gda.domain.Cars;
-import com.gda.dtos.Car;
+import com.gda.dtos.CarJson;
+import com.gda.exceptions.ApiException;
 import com.gda.services.CarService;
 import com.gda.utils.JsonFormatter;
 import com.gda.utils.JsonResponseFactory;
@@ -10,31 +11,27 @@ import spark.Request;
 import spark.Response;
 
 import javax.servlet.http.HttpServletResponse;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 
 public class CarController {
-    public static Object getCarById(Request req, Response res) {
+    public static String getCarById(Request req, Response res) throws ApiException {
         try{
             Integer carId = Integer.valueOf(req.params("car_id"));
-
+            validateCarId(carId);
             Cars car = CarService.getCarById(carId);
             return JsonResponseFactory.createJsonResponse(res,
                     HttpServletResponse.SC_OK,
                     car);
         } catch (NumberFormatException e) {
-            return JsonResponseFactory.createErrorResponse(res,
-                    HttpServletResponse.SC_BAD_REQUEST,
-                    "The CarID is invalid.");
-        } catch (RuntimeException e) {
-            return JsonResponseFactory.createErrorResponse(res,
-                    HttpServletResponse.SC_NOT_FOUND,
-                    e.getMessage());
+            throw new ApiException(e.getMessage(), HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 
-    public static Object deleteCarById(Request req, Response res) {
+    public static Object deleteCarById(Request req, Response res) throws ApiException {
         try{
             Integer carId = Integer.valueOf(req.params("car_id"));
-
+            validateCarId(carId);
             CarService.deleteCarById(carId);
             return JsonResponseFactory.createJsonResponse(res,
                     HttpServletResponse.SC_OK,
@@ -42,47 +39,40 @@ public class CarController {
         } catch (NumberFormatException e) {
             return JsonResponseFactory.createErrorResponse(res,
                     HttpServletResponse.SC_BAD_REQUEST,
-                    "The CarID is invalid.");
-        } catch (RuntimeException e) {
-            return JsonResponseFactory.createErrorResponse(res,
-                    HttpServletResponse.SC_NOT_FOUND,
-                    e.getMessage());
+                    e);
         }
     }
 
-    public static Object createCar(Request req, Response res) {
+    public static Object createCar(Request req, Response res) throws ApiException {
         try {
-            Cars carDb = Cars.createFrom(JsonFormatter.parse(req.body(), Car.class));
-
+            Cars carDb = Cars.createFrom(JsonFormatter.parse(req.body(), CarJson.class));
+            validateCarId(carDb.getCarId());
             CarService.createCar(carDb);
             return JsonResponseFactory.createSuccessResponse(res,
-                    String.format("The CarID (%d) was created successfully.", carDb.getCarId()));
+                    carDb);
         } catch (JsonProcessingException e) {
             return JsonResponseFactory.createErrorResponse(res,
                     HttpServletResponse.SC_BAD_REQUEST,
-                    "The Car could not be created because the request contains invalid information.");
-        } catch (Exception e) {
-            return JsonResponseFactory.createErrorResponse(res,
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    "The Car could not be created. Reason: " + e.getMessage());
+                    e);
         }
     }
 
-    public static Object updateCar(Request req, Response res) {
+    public static Object updateCar(Request req, Response res) throws ApiException {
         try {
-            Cars car = Cars.createFrom(JsonFormatter.parse(req.body(), Car.class));
+            Cars car = Cars.createFrom(JsonFormatter.parse(req.body(), CarJson.class));
+            validateCarId(car.getCarId());
             CarService.updateCar(car);
             return JsonResponseFactory.createSuccessResponse(res,
-                    String.format("The CarID (%d) was updated successfully.", car.getCarId()));
+                    car);
         } catch (JsonProcessingException e) {
             return JsonResponseFactory.createErrorResponse(res,
                     HttpServletResponse.SC_BAD_REQUEST,
-                    "The Car could not be updated because the request contains invalid information.");
-        }catch (Exception e) {
-            return JsonResponseFactory.createErrorResponse(res,
-                    HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    "The Car could not be updated. Reason: " + e.getMessage());
+                    e);
         }
+    }
+
+    private static void validateCarId(Integer carId) {
+        if (carId == null || carId < 0) throw new RuntimeException(String.format("The CarId (%d) is invalid.", carId));
     }
 
 }

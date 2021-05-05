@@ -1,6 +1,7 @@
 package com.gda.router;
 
 import com.gda.controllers.CarController;
+import spark.ExceptionHandler;
 import spark.Spark;
 import spark.servlet.SparkApplication;
 
@@ -16,5 +17,6 @@ public class Router implements SparkApplication {
 
         Spark.notFound((req, res) -> {res.type("application/json");
             return "{\"message\":\"Invalid URL.\"}";});
+        Spark.exception(Exception.class, new ApiExceptionHandler<>());
     }
 }
