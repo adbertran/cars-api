@@ -13,7 +13,7 @@
         <property name="hibernate.hbm2ddl.auto">update</property>
         <property name="show_sql">true</property>
 
-        <mapping class="com.gda.domain.Cars"/>
+        <mapping class="com.gda.domain.CarsDb"/>
 
     </session-factory>
 </hibernate-configuration>

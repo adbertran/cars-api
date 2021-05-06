@@ -1,5 +1,7 @@
 package com.gda.domain;
 
+import com.gda.dtos.CarJson;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
@@ -8,7 +10,7 @@ import java.util.Objects;
 
 @Entity
 @Table(name = "cars")
-public class Cars {
+public class CarsDb {
     private Integer carId;
     private String brand;
     private String colour;
@@ -16,6 +18,14 @@ public class Cars {
     private String licensePlate;
     private transient Timestamp dateCreated;
     private transient Timestamp lastUpdated;
+
+    public static CarsDb createFrom(CarJson carJson) {
+        CarsDb carsDb = new CarsDb();
+        carsDb.carId= carJson.getCarId();
+        carsDb.brand = carJson.getBrand();
+        carsDb.colour = carJson.getColour();
+        return carsDb;
+    }
 
     @Id
     @Column(name = "car_id", nullable = false)
@@ -101,8 +111,8 @@ public class Cars {
     public boolean equals(Object o) {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
-        Cars cars = (Cars) o;
-        return carId.equals(cars.carId) && brand.equals(cars.brand) && colour.equals(cars.colour) && value.equals(cars.value) && licensePlate.equals(cars.licensePlate);
+        CarsDb carsDb = (CarsDb) o;
+        return carId.equals(carsDb.carId) && brand.equals(carsDb.brand) && colour.equals(carsDb.colour) && value.equals(carsDb.value) && licensePlate.equals(carsDb.licensePlate);
     }
 
     @Override

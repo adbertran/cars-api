@@ -1,11 +1,11 @@
 package com.gda.dtos;
 
-import com.gda.domain.Cars;
+import com.gda.domain.CarsDb;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 
-public class Car {
+public class CarJson extends JsonDto {
     private Integer carId;
     private String brand;
     private String colour;
@@ -65,8 +65,8 @@ public class Car {
     }
 
 
-    public static Car createCar(Cars car) {
-        Car reg = new Car();
+    public static CarJson createCar(CarsDb car) {
+        CarJson reg = new CarJson();
         reg.carId = car.getCarId();
         reg.brand = car.getBrand();
         reg.colour = car.getColour();

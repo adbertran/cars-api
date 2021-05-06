@@ -1,7 +1,7 @@
 package com.gda.persistence;
 
-import com.gda.domain.Cars;
-import com.gda.dtos.Car;
+import com.gda.domain.CarsDb;
+import com.gda.dtos.CarJson;
 import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.Transaction;
@@ -38,15 +38,15 @@ public enum DaoService {
 
 
     //obtener el car.
-    public Cars getCar(Integer carId) {
-        Cars reg = null;
+    public CarsDb getCar(Integer carId) {
+        CarsDb reg = null;
         Session session = sessionFactory.openSession();
         Transaction tx = null;
 
         try {
 
             tx = session.beginTransaction();
-            reg = session.get(Cars.class, carId);
+            reg = session.get(CarsDb.class, carId);
             tx.commit();
 
         } catch (Exception e) {
@@ -62,19 +62,23 @@ public enum DaoService {
     }
 
     // eliminar un car
-    public Cars deleteCar(Integer carId) {
-        Cars reg = null;
+    public void deleteCar(Integer carId) {
+        CarsDb reg = null;
         Session session = sessionFactory.openSession();
         Transaction tx = null;
 
         try {
             tx = session.beginTransaction();
-            reg = session.get(Cars.class, carId);
+            reg = session.get(CarsDb.class, carId);
 
             if (reg != null) {
                 session.delete(reg);
                 session.flush();
                 tx.commit();
+            } else {
+                throw new RuntimeException("No se puede borrar el auto inexistente.");
+
+
             }
 
         } catch (Exception e) {
@@ -86,11 +90,11 @@ public enum DaoService {
         } finally {
             session.close();
         }
-        return reg;
+
     }
 
     // crear el car
-    public void createCar(Car reg) {
+    public void createCar(CarsDb reg) {
         Session session = sessionFactory.openSession();
         Transaction tx = null;
         try {

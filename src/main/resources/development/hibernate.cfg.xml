@@ -16,7 +16,7 @@
 
         <property name="hibernate.hbm2ddl.auto">update</property>
 
-        <mapping class="com.gda.domain.Cars"/>
+        <mapping class="com.gda.domain.CarsDb"/>
 
     </session-factory>
 </hibernate-configuration>
