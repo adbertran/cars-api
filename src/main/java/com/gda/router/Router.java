@@ -17,6 +17,7 @@ public class Router implements SparkApplication {
 
         Spark.notFound((req, res) -> {res.type("application/json");
             return "{\"message\":\"Invalid URL.\"}";});
+
         Spark.exception(Exception.class, new ApiExceptionHandler<>());
     }
 }

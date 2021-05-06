@@ -37,9 +37,7 @@ public class CarController {
                     HttpServletResponse.SC_OK,
                     String.format("The CarId (%d) was removed from the DB.", carId));
         } catch (NumberFormatException e) {
-            return JsonResponseFactory.createErrorResponse(res,
-                    HttpServletResponse.SC_BAD_REQUEST,
-                    e);
+            throw new ApiException(e.getMessage(), HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 
@@ -51,9 +49,7 @@ public class CarController {
             return JsonResponseFactory.createSuccessResponse(res,
                     carDb);
         } catch (JsonProcessingException e) {
-            return JsonResponseFactory.createErrorResponse(res,
-                    HttpServletResponse.SC_BAD_REQUEST,
-                    e);
+            throw new ApiException(e.getMessage(), HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 
@@ -65,9 +61,7 @@ public class CarController {
             return JsonResponseFactory.createSuccessResponse(res,
                     car);
         } catch (JsonProcessingException e) {
-            return JsonResponseFactory.createErrorResponse(res,
-                    HttpServletResponse.SC_BAD_REQUEST,
-                    e);
+            throw new ApiException(e.getMessage(), HttpServletResponse.SC_BAD_REQUEST);
         }
     }
 
