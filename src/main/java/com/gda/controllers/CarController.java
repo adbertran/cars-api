@@ -31,6 +31,9 @@ public class CarController {
     public static Object deleteCarById(Request req, Response res) throws ApiException {
         try{
             Integer carId = Integer.valueOf(req.params("car_id"));
+            if (req.headers("X-Admin") == null || !req.headers("X-Admin").equals("true")) {
+                throw new ApiException("Only admins can delete cars.", HttpServletResponse.SC_FORBIDDEN);
+            }
             validateCarId(carId);
             CarService.deleteCarById(carId);
             return JsonResponseFactory.createJsonResponse(res,
@@ -65,8 +68,8 @@ public class CarController {
         }
     }
 
-    private static void validateCarId(Integer carId) {
-        if (carId == null || carId < 0) throw new RuntimeException(String.format("The CarId (%d) is invalid.", carId));
+    private static void validateCarId(Integer carId) throws ApiException {
+        if (carId == null || carId < 0) throw new ApiException(String.format("The CarId (%d) is invalid.", carId), HttpServletResponse.SC_BAD_REQUEST);
     }
 
 }
