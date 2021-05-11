@@ -31,7 +31,7 @@ public class CarService {
 
     private static void validateDuplicateRecord(Integer carId) throws ApiException {
         Cars car = DaoService.INSTANCE.getCar(carId);
-        if (car != null) throw new ApiException(String.format("The CarID (%d) exists already.", carId));
+        if (car != null) throw new ApiException(String.format("The CarID (%d) already exists.", carId), HttpServletResponse.SC_CONFLICT);
     }
 
     private static void validateRecordExists(Integer carId) throws ApiException {
